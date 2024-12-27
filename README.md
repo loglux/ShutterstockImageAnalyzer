@@ -31,7 +31,7 @@ This automation is particularly beneficial for photographers, content creators, 
 
 1.  Clone the repository:
 ```bash
-git clone https://github.com/ShutterstockimageAnalyzer/image-analyzer.git
+git clone https://github.com/loglux/ShutterstockImageAnalyzer.git
 cd image-analyzer
 ```
 2.  Install dependencies:
