@@ -36,6 +36,7 @@ cd image-analyzer
 ```
 2.  Install dependencies:
 ```bash
+pip install ollama
 pip install pandas
 ``` 
     
