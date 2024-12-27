@@ -31,7 +31,7 @@ class ImageAnalyzer:
                     "content": prompt_to_use,
                     "images": [image_path]
                 }],
-                "raw": "true",
+              #  "raw": "true",
               #  "format": "json",
                # "stream": "false",
                 "options": {
