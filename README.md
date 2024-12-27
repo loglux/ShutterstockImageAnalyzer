@@ -1,10 +1,14 @@
-# Image Analyzer Project
+# Shutterstock Metadata Generator Powered by AI
 
-This project leverages **Ollama** and AI models to analyze images and prepare metadata suitable for Shutterstock. The tool processes images to generate:
+This project utilizes Ollama and AI models to analyze images and automatically generate metadata tailored for Shutterstock. By automating the creation of descriptive text, keywords, and categories, the tool streamlines the process of preparing images for upload, saving time and reducing manual effort.
 
-1.  A descriptive text for the image.
-2.  A list of keywords relevant to the image content.
-3.  Appropriate categories for classification.
+The tool simplifies contributing high-quality images to Shutterstock or similar platforms by providing:
+
+1. A descriptive text summarizing the image.
+2. A list of keywords relevant to the image content.
+3. Suggested categories for classification.
+
+This automation is particularly beneficial for photographers, content creators, and agencies looking to enhance their workflow and focus more on creativity rather than metadata management.
 
 ## Features
 
