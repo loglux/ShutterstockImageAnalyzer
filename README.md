@@ -66,3 +66,14 @@ python image_analyzer.py
 
 -   `image_analyzer.py`: Core script for image analysis and metadata extraction.
 -   `shutterstock.csv`: Output CSV file containing image metadata.
+
+### Current Functionality
+
+The project currently supports analyzing a **single image at a time**. This limitation is intentional to facilitate debugging and refining the analysis and metadata extraction methods.
+
+### Planned Enhancements
+
+Future updates will include:
+
+-   **Batch processing**: The ability to automatically traverse through images in a specified folder and its subfolders.
+-   **Centralized metadata storage**: Metadata from all analyzed images will be stored in a single consolidated CSV file for easier management and access.

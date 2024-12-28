@@ -164,7 +164,6 @@ if __name__ == "__main__":
 
     # Analyze the image
     result = analyzer.analyze_image(image_path)
-    print("Raw Response:", result)
 
     # Ensure result is structured before proceeding
     if isinstance(result, ImageAnalysisResult):
