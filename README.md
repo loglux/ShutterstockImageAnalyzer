@@ -22,7 +22,8 @@ This automation is particularly beneficial for photographers, content creators, 
 
 ## Prerequisites
 
--   **Ollama** installed and configured locally with GPU support.
+-   **Ollama** installed and configured locally with GPU support and the `llama3.2-vision` model.
+    - Recommended to run on a computer with a modern GPU, such as an NVIDIA RTX series. 
 -   Python 3.10 or later.
 -   The following Python packages:
     -   `json`
