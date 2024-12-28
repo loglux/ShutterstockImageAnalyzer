@@ -125,18 +125,8 @@ class ImageAnalyzer:
             dict: Parsed description, keywords, and categories.
         """
         try:
-            # description_match = re.search(r"(?:\*\*|# )Description(?:\*\*|)\n(.+?)(?=\n#|$)", raw_response, re.S)
-            # description_match = re.search(r"(?:\*\*|# )Description(?:\*\*|)\n(.+?)(?=\n(?:\*\*|# )Keywords|$)",
-            #                              raw_response, re.S)
-
-            # description_match = re.search(
-            #    r"(?:\*\*|# )?Description(?:\*\*|# )?\n(.+?)(?=\n(?:\*\*|# )?Keywords|$)",
-            #    raw_response,
-            #    re.S
-            # )
-
             description_match = re.search(
-                r"(?:\*\*|# )Description(?:\*\*|)\s*\n(.+?)(?=\n(?:\*\*|# )?Keywords|$)",
+                r"(?:\*\*|# )Description(?:\*\*|)\s*\n(.+?)(?=\n\s*(?:\*\*|# )Keywords|$)",
                 raw_response,
                 re.S
             )
@@ -144,8 +134,13 @@ class ImageAnalyzer:
 
             keywords_match = re.search(r"(?:\*\*|# )Keywords(?:\*\*|)\s*((?:.+?\n)+?)(?=\n#|\*\*Categories|$)",
                                        raw_response, re.S)
-            categories_match = re.search(r"(?:\*\*|# )Categories(?:\*\*|)\s*(.+?)(?=\n#|\*\*Classification|$)",
-                                         raw_response, re.S)
+
+            categories_match = re.search(
+                r"(?:\*\*|# )Categories(?:\*\*|)\s*(.+?)(?=\n\s*(?:\*\*|# )Classification|$)",
+                raw_response,
+                re.S
+            )
+
             classification_match = re.search(
                 r"(?:\*\*|# )Classification(?:\*\*|):?\s*(?:-\s*)?(?:\*\*(Commercial|Editorial)\*\*|(?:\[?(Commercial|Editorial)\]?|(?:Commercial|Editorial)(?:\s*[-:].*)))",
                 raw_response
@@ -206,14 +201,13 @@ class ImageAnalyzer:
         """
         # Prepare data to append
         row = {
-            "Filename": image_path,
-            "Description": results.get("description", ""),
-            "Keywords": ", ".join(results.get("keywords", [])),
-            "Categories": ", ".join(results.get("categories", [])),
-            "Editorial": results.get("editorial", "no"),
-            "Mature content": results.get("mature_content", "no"),
-            "Illustration": results.get("illustration", "no"),
-            # **default_options,
+            "Filename": image_path.strip(),
+            "Description": results.get("description", "").strip(),
+            "Keywords": ", ".join(results.get("keywords", [])).strip(),
+            "Categories": ", ".join(results.get("categories", [])).strip(),
+            "Editorial": results.get("editorial", "no").strip(),
+            "Mature content": results.get("mature_content", "no").strip(),
+            "Illustration": results.get("illustration", "no").strip(),
         }
 
         # Ensure correct column order
@@ -252,6 +246,7 @@ if __name__ == "__main__":
 
     # Path to the image
     image_path = "DSC_8205.JPG"
+    file_path = "shutterstock.csv"
 
     custom_prompt = (
         """
@@ -277,6 +272,6 @@ if __name__ == "__main__":
     parsed_result = analyzer.parse_raw_response(result)
 
     # Save to CSV
-    analyzer.save_to_csv(parsed_result, image_path, "shutterstock.csv")
+    analyzer.save_to_csv(parsed_result, image_path, file_path)
 
 
