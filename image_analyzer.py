@@ -27,7 +27,7 @@ class ImageAnalyzer:
                     """
                     Analyze this image and provide the following details:
                     1. A descriptive text for the image suitable for Shutterstock, up to 200 characters.
-                    2. Include at least 7 and up to 50 unique keywords that accurately describe the image content.
+                    2. Include at least 7 and up to 50 unique keywords that must relevant to the image content.
                     3. Two categories that best describe the image. Categories **must** be chosen strictly from the following list:
 
                     Abstract, Animals/Wildlife, Arts, Backgrounds/Textures, Beauty/Fashion, Buildings/Landmarks, 
