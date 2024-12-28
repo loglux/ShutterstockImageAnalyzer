@@ -4,9 +4,12 @@ This project utilizes Ollama and AI models to analyze images and automatically g
 
 The tool simplifies contributing high-quality images to Shutterstock or similar platforms by providing:
 
-1. A descriptive text summarizing the image.
-2. A list of keywords relevant to the image content.
-3. Suggested categories for classification.
+1. A **descriptive** text summarizing the image.
+2. A list of **keywords** relevant to the image content.
+3. Suggested **categories** for classification.
+4. **Image classification**: Determines whether the image is for commercial or editorial purposes based on its content and usage guidelines.
+5. **Mature Content**: Identifies whether the image contains nudity, violence, or other content unsuitable for general audiences.
+6. **Illustration detection**: Recognizes whether the image qualifies as an illustration (e.g., digitally created or heavily manipulated).
 
 This automation is particularly beneficial for photographers, content creators, and agencies looking to enhance their workflow and focus more on creativity rather than metadata management.
 
