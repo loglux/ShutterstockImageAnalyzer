@@ -1,80 +1,145 @@
-# Shutterstock Metadata Generator Powered by AI
+# **Shutterstock Metadata Generator Powered by AI**
 
-This project utilizes Ollama and AI models to analyze images and automatically generate metadata tailored for Shutterstock. By automating the creation of descriptive text, keywords, and categories, the tool streamlines the process of preparing images for upload, saving time and reducing manual effort.
+This project uses **Ollama** and advanced AI models to automate metadata generation for Shutterstock images. By analyzing images and extracting meaningful details, it streamlines the process of creating descriptive text, keywords, and categories, saving time and reducing manual effort.
 
-The tool simplifies contributing high-quality images to Shutterstock or similar platforms by providing:
+This tool is ideal for photographers, content creators, and agencies aiming to focus more on creativity and less on tedious metadata tasks.
 
-1. A **descriptive** text summarizing the image.
-2. A list of **keywords** relevant to the image content.
-3. Suggested **categories** for classification.
-4. **Image classification**: Determines whether the image is for commercial or editorial purposes based on its content and usage guidelines.
-5. **Mature Content**: Identifies whether the image contains nudity, violence, or other content unsuitable for general audiences.
-6. **Illustration detection**: Recognizes whether the image qualifies as an illustration (e.g., digitally created or heavily manipulated).
+### **What It Does**
 
-This automation is particularly beneficial for photographers, content creators, and agencies looking to enhance their workflow and focus more on creativity rather than metadata management.
+1.  **Description**: Generates a descriptive text summarizing the image.
+2.  **Keywords**: Produces a list of relevant keywords.
+3.  **Categories**: Suggests appropriate categories for the image.
+4.  **Image Classification**: Identifies if the image is commercial or editorial.
+5.  **Mature Content Detection**: Flags images with nudity, violence, or unsuitable content.
+6.  **Illustration Detection**: Recognizes digitally created or heavily manipulated images.
 
-## Features
+----------
 
--   Uses the `llama3.2-vision` model hosted locally.
--   Parses AI responses to maintain consistent and clean metadata formatting.
+## **Features**
+
+-   Utilizes the `llama3.2-vision` model hosted locally.
+-   Parses AI responses to provide clean and consistent metadata.
 -   Outputs results in Shutterstock-compatible CSV format.
--   Configurable options for advanced analysis.
+-   Supports customizable prompts and advanced analysis options.
+-   Recursive directory processing for batch operations.
 
-## Prerequisites
+----------
 
--   **Ollama** installed and configured locally with GPU support and the `llama3.2-vision` model.
-    - Recommended to run on a computer with a modern GPU, such as an NVIDIA RTX series. 
--   Python 3.10 or later.
--   The following Python packages:
-    -   `json`
+## **Prerequisites**
+
+-   **Ollama** installed and configured locally with GPU support.
+    -   Recommended hardware: Modern NVIDIA RTX series GPU.
+    -   Tested and works flawlessly on **NVIDIA RTX 4070**.
+-   **Python 3.10+**.
+-   Required Python libraries:
+    -   `ollama`
     -   `pandas`
-    -   `os`
-    -   `re`
+    -   `pydantic`
 
-## Installation
+----------
+
+## **Installation**
 
 1.  Clone the repository:
+    
 ```bash
 git clone https://github.com/loglux/ShutterstockImageAnalyzer.git
-cd image-analyzer
+cd ShutterstockImageAnalyzer` 
 ```
+   
 2.  Install dependencies:
+    
+ ```bash
+pip install ollama pandas pydantic
+ ``` 
+    
+3.  Ensure **Ollama** is running on your local machine:
+    
 ```bash
-pip install ollama
-pip install pandas
+ollama run llama3.2-vision
+``` 
+   
+----------
+
+## **Usage**
+
+### **1. Configuration**
+
+Update `base_url` to match your Ollama instance:
+```python
+base_url = "http://localhost:11434/"
+``` 
+
+Set the paths for the image directory and output file:
+```python
+directory_path = r"ShutterstockImageAnalyzer"  
+file_path = r"shutterstock.csv"
+```
+Enable or disable recursive processing:
+```python
+recursive=True  # Process subfolders
+recursive=False  # Only process files in the main directory
+``` 
+
+### **2. Run the Script**
+Execute the script to process images:
+```bash
+python image_analyzer.py`
+```
+
+### **3. View the Results**
+
+The metadata will be saved to `shutterstock.csv` in the project directory.
+
+### **4. Customize Prompts and Options**
+
+Modify the prompt or advanced options to fine-tune model behavior:
+
+-   **Custom Prompt**:
+```python
+prompt = "Describe the image, highlighting its objects and their relationships."
 ``` 
     
-3.  Ensure **Ollama** is running on the local host.
+-   **Advanced Options**:
+```python
+advanced_options = {"temperature": 0.7, "top_p": 0.95}
+``` 
    
 
-## Usage
+### **5. Process a Directory**
 
-1.  Update the `base_url` in the script to match your Ollama instance:
-    
+Analyze all images in a directory:
 ```python
-base_url="http://localhost:11434/"
+analyzer.process_images_in_directory(
+    directory_path="path/to/images",
+    file_path="results.csv",
+    prompt="Analyze this image and provide details...",
+    advanced_options={"temperature": 0.6},
+    recursive=True  # Enable subfolder processing
+)
+```
+
+----------
+
+## **Default Behaviors**
+
+-   **Recursive Directory Search**: Enabled by default.
+-   **Prompt and Options**: Defaults to a generic prompt and balanced settings unless specified.
+
+### **Custom Execution**
+
+To analyze a single image, modify the script’s `__main__` block or use the following method:
+
+```python
+analyzer.start_analysis(
+    image_path="path/to/image.jpg",
+    file_path="results.csv",
+    prompt="Analyze this image and generate metadata."
+)
 ``` 
-    
-2.  Run the script with your image file:
-```bash
-python image_analyzer.py
-``` 
-    
-3.  The results will be saved to `shutterstock.csv` in the project directory.
-    
+----------
 
-## File Details
+## **File Details**
 
--   `image_analyzer.py`: Core script for image analysis and metadata extraction.
--   `shutterstock.csv`: Output CSV file containing image metadata.
-
-### Current Functionality
-
-The project currently supports analyzing a **single image at a time**. This limitation is intentional to facilitate debugging and refining the analysis and metadata extraction methods.
-
-### Planned Enhancements
-
-Future updates will include:
-
--   **Batch processing**: The ability to automatically traverse through images in a specified folder and its subfolders.
--   **Centralized metadata storage**: Metadata from all analyzed images will be stored in a single consolidated CSV file for easier management and access.
+-   **`image_analyzer.py`**: Core script for metadata generation and processing.
+-   **`shutterstock.csv`**: Output file containing structured metadata.
