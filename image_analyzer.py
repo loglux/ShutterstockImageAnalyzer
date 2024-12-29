@@ -89,6 +89,7 @@ class ImageAnalyzer:
                 data["options"].update(advanced_options.get("options", {}))
 
             print("Sending request to the model...")
+            # print("Data sent:", json.dumps(data, indent=4))  # Debug: Show request payload
             response = self.client.chat(
                 model=self.model,
                 messages=data["messages"],
