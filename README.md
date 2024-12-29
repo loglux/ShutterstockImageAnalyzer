@@ -72,8 +72,8 @@ base_url = "http://localhost:11434/"
 
 Set the paths for the image directory and output file:
 ```python
-directory_path = r"ShutterstockImageAnalyzer"  
-file_path = r"shutterstock.csv"
+image_directory_path = r"ShutterstockImageAnalyzer"  
+csv_file_path = r"shutterstock.csv"
 ```
 Enable or disable recursive processing:
 ```python

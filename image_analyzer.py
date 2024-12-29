@@ -90,7 +90,7 @@ class ImageAnalyzer:
                 ],
                 "format": ImageAnalysisResult.model_json_schema(),  # Pass the schema
                 "options": {
-                    "num_ctx": 8192,  # didn't spot the difference
+                #    "num_ctx": 8192,  # didn't spot the difference
                     "num_predict": 200,  # didn't spot the difference
                     "top_k": 150,  # should increase the diversity of keywords
                     "repeat_penalty": 1.1,  # starting with 1.2 and more reduces a number of keywords below 7
@@ -246,10 +246,10 @@ if __name__ == "__main__":
 
     # Path to the image
     # image_path = r"D:\PycharmProjects\Lab\ShutterstockImageAnalyzer\DSC_1895.JPG"
-    directory_path = r"D:\PycharmProjects\Lab\ShutterstockImageAnalyzer"
-    file_path = "shutterstock.csv"
+    image_directory_path = r"D:\PycharmProjects\Lab\ShutterstockImageAnalyzer"
+    csv_file_path = "shutterstock.csv"
 
     #analyzer.start_analysis(image_path, prompt=None, advanced_options=None)
-    analyzer.process_images_in_directory(directory_path, file_path, prompt=None, advanced_options=None, recursive=False)
+    analyzer.process_images_in_directory(image_directory_path, csv_file_path, prompt=None, advanced_options=None, recursive=False)
 
 
