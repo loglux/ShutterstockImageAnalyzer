@@ -26,7 +26,7 @@ class ImageAnalyzer:
                 prompt = (
                     """
                     Analyze this image and provide the following details:
-                    1. A descriptive text for the image suitable for Shutterstock, up to 200 characters.
+                    1. Provide a descriptive text for the image, suitable for Shutterstock, with a maximum length of 200 characters
                     2. Include at least 7 and up to 50 unique keywords that must relevant to the image content.
                     3. Two categories that best describe the image. Categories **must** be chosen strictly from the following list:
 
@@ -58,7 +58,7 @@ class ImageAnalyzer:
 
                     Return the result in the following JSON format:
                     {
-                        "description": "A short descriptive text for the image.",
+                        "description": "A brief descriptive text for the image.",
                         "keywords": ["keyword1", "keyword2", "..."],
                         "categories": ["category1", "category2"],
                         "editorial": true/false,
