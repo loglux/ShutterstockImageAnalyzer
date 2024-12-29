@@ -26,8 +26,8 @@ class ImageAnalyzer:
                 prompt = (
                     """
                     Analyze this image and provide the following details:
-                    1. Provide a descriptive text for the image, suitable for Shutterstock, with a maximum length of 200 characters
-                    2. Include at least 7 and up to 50 unique keywords that must relevant to the image content.
+                    1. Provide a descriptive text for the image, suitable for Shutterstock, with a maximum length of 200 characters. If possible, specify the exact name of the object (e.g., eagle, crane) rather than using broad term like **bird**.
+                    2. Include at least 7 and up to 50 unique keywords that are highly relevant to the image content.
                     3. Two categories that best describe the image. Categories **must** be chosen strictly from the following list:
 
                     Abstract, Animals/Wildlife, Arts, Backgrounds/Textures, Beauty/Fashion, Buildings/Landmarks, 
