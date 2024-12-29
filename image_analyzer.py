@@ -27,7 +27,7 @@ class ImageAnalyzer:
                     """
                     Analyze this image and provide the following details:
                     1. Provide a descriptive text for the image, suitable for Shutterstock, with a maximum length of 200 characters. If possible, specify the exact name of the object (e.g., eagle, crane) rather than using broad term like **bird**.
-                    2. Include at least 7 and up to 50 unique keywords that are highly relevant to the image content.
+                    2. Include **at least 7** and up to 50 unique and diverse keywords that are highly relevant to the image content, even if they are not directly mentioned in the description. Ensure to include synonyms (e.g., "gull", "seagull", "waterbird"), while avoiding contradictory or conflicting terms.
                     3. Two categories that best describe the image. Categories **must** be chosen strictly from the following list:
 
                     Abstract, Animals/Wildlife, Arts, Backgrounds/Textures, Beauty/Fashion, Buildings/Landmarks, 
@@ -80,8 +80,12 @@ class ImageAnalyzer:
                 ],
                 "format": ImageAnalysisResult.model_json_schema(),  # Pass the schema
                 "options": {
+                    "num_ctx": 4096, # didn't spot the difference
+                    "num_predict": 200, # didn't spot the difference
+                    "top_k": 150, # should increase the diversity of keywords
+                    "repeat_penalty": 1.1, # starting with 1.2 and more reduce a number of keywords
                     "temperature": 0.5,
-                    "top_p": 1.0
+                    "top_p": 0.9 # 0.9-1.0 should be OK, starting with 0.8 and low produces irrelevant keywords
                 }
             }
 
