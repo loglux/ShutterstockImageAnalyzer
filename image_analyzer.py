@@ -36,7 +36,7 @@ class ImageAnalyzer:
                 prompt = (
                     """
                     Analyze this image and provide the following details:
-                    1. Provide a descriptive text for the image, suitable for Shutterstock, with a maximum length of 200 characters. If possible, specify the exact name of the object (e.g., eagle, crane) rather than using broad term like **bird**.
+                    1. Provide a descriptive text for the image, suitable for Shutterstock, with a **maximum length** of 200 characters. If possible, specify the exact name of the object (e.g., eagle, crane) rather than using broad term like **bird**.
                     2. Include **at least 7** and up to 50 unique and diverse keywords that are highly relevant to the image content, even if they are not directly mentioned in the description. Ensure to include synonyms (e.g., "gull", "seagull", "waterbird"), while avoiding contradictory or conflicting terms.
                     3. Up to two categories that best describe the image. Categories **must** be relevant and chosen strictly from the following list:
 
@@ -45,18 +45,17 @@ class ImageAnalyzer:
                     Industrial, Interiors, Miscellaneous, Nature, Objects, Parks/Outdoor, People, Religion, 
                     Science, Signs/Symbols, Sports/Recreation, Technology, Transportation, Vintage.
 
-                    4. Based on the image content, classify it as **commercial** or **editorial**:
-                        - **Commercial**: The image must meet the following requirements:
-                            - All recognisable individuals must have a signed and valid model release.
-                            - Recognisable private properties, artworks, or objects require property releases.
-                            - No visible logos, trademarks, or brand names are present.
-                            - The image is free of intellectual property restrictions and is suitable for promotional use.
-
-                        - **Editorial**: The image meets one or more of the following conditions:
-                            - No releases (model or property) are available for recognisable individuals or private properties.
-                            - The image contains logos, trademarks, or brand names.
-                            - The content documents a specific event, place, or public activity, or tells a story that is newsworthy or educational.
-                            - The image has not been posed or directed by the photographer and represents an authentic moment in time.
+                    4. Based on the visual content of the image, classify it as **commercial** or **editorial** based on the following criteria:
+                    - **Commercial**:
+                      - The image looks generic and polished, making it suitable for advertising or promotional use.
+                      - It does NOT show visible logos, brand names, or trademarks.
+                      - It does NOT feature clearly recognizable individuals, private properties, or artworks unless they are generic or unidentifiable.
+                      - The scene appears intentionally staged or directed for professional purposes.
+                    - **Editorial**:
+                      - The image captures a real-life moment, event, or public place without significant staging.
+                      - It may show visible logos, brand names, trademarks, recognizable individuals, or properties.
+                      - The image feels spontaneous or candid, representing authentic, unscripted moments.
+                      - It may illustrate cultural, social, or historical significance, or document a notable event or place.
 
                     5. Indicate if the image contains **Mature Content**:
                         - **Yes**: The image contains nudity, sexual themes, violence, or any content that could be considered inappropriate for a general audience.
@@ -90,11 +89,11 @@ class ImageAnalyzer:
                 ],
                 "format": ImageAnalysisResult.model_json_schema(),  # Pass the schema
                 "options": {
-                #    "num_ctx": 8192,  # didn't spot the difference
-                    "num_predict": 200,  # didn't spot the difference
+                    "num_ctx": 8192,
+                    "num_predict": 300,  # 100 causes JSON errors
                     "top_k": 150,  # should increase the diversity of keywords
                     "repeat_penalty": 1.1,  # starting with 1.2 and more reduces a number of keywords below 7
-                    "temperature": 0.5,
+                    "temperature": 0.5, # 0.5-0.6 - 0.5
                     "top_p": 0.9  # 0.9-1.0 should be OK, starting with 0.8 and low produces irrelevant keywords
                 }
             }
@@ -251,5 +250,3 @@ if __name__ == "__main__":
 
     #analyzer.start_analysis(image_path, prompt=None, advanced_options=None)
     analyzer.process_images_in_directory(image_directory_path, csv_file_path, prompt=None, advanced_options=None, recursive=False)
-
-
