@@ -36,7 +36,7 @@ class ImageAnalyzer:
                 prompt = (
                     """
                     Analyze this image and provide the following details:
-                    1. Provide a descriptive text for the image, suitable for Shutterstock, with a **maximum length** of 200 characters. If possible, specify the exact name of the object, landmark, or location (e.g., "Eiffel Tower" instead of "tower" or "landmark"; "Bald Eagle" instead of "bird"). Use specific terms for identifiable entities or features visible in the image, avoiding overly generic descriptions.
+                    1. Provide a descriptive text for the image, suitable for Shutterstock, with a **maximum length** of 200 characters. If possible, specify the exact name of the object, landmark, or location (e.g., "Eiffel Tower" instead of "tower" or "landmark"; "Bald Eagle" instead of "bird"). Use specific terms for identifiable entities or features visible in the image, avoiding overly generic descriptions. Add emotional, engaging language to highlight the beauty, atmosphere, or unique character of the scene.
                     2. Include **at least 7** and up to 50 unique and diverse keywords that are highly relevant to the image content, even if they are not directly mentioned in the description. Ensure to include synonyms (e.g., "gull", "seagull", "waterbird"), while avoiding contradictory or conflicting terms.
                     3. Up to two categories that best describe the image. Categories **must** be relevant and chosen strictly from the following list:
 
@@ -93,7 +93,7 @@ class ImageAnalyzer:
                     "num_predict": 300,  # 100 causes JSON errors
                     "top_k": 150,  # should increase the diversity of keywords
                     "repeat_penalty": 1.1,  # starting with 1.2 and more reduces a number of keywords below 7
-                    "temperature": 1, # 0.5-0.6 - 0.5
+                    "temperature": 0.8, # 0.5-0.6 - 0.5
                     "top_p": 0.9  # 0.9-1.0 should be OK, starting with 0.8 and low produces irrelevant keywords
                 }
             }
@@ -250,3 +250,6 @@ if __name__ == "__main__":
 
     #analyzer.start_analysis(image_path, prompt=None, advanced_options=None)
     analyzer.process_images_in_directory(image_directory_path, csv_file_path, prompt=None, advanced_options=None, recursive=False)
+
+
+
