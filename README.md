@@ -143,7 +143,7 @@ analyzer.start_analysis(
 
 -   **`image_analyzer.py`**: Core script for metadata generation and processing.
 -   **`shutterstock.csv`**: Output file containing structured metadata.
-
+----------
 ### **Alternative Models**
 
 While the tool is optimized for **`llama3.2-vision`**, it also supports other vision models, such as **`llava-7b`** and **`llava-llama3-8b`**, which come with their own advantages and limitations:
