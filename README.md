@@ -175,11 +175,9 @@ When using alternative models, some parameters or parts of the prompt may need t
 
 To switch models, update the `model` parameter in the script:
 
-python
-
-Copy code
-
-`analyzer = ImageAnalyzer(model="llava", base_url="http://localhost:11434/")` 
+```python
+analyzer = ImageAnalyzer(model="llava", base_url="http://localhost:11434/")
+``` 
 
 ----------
 
