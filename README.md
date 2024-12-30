@@ -143,3 +143,46 @@ analyzer.start_analysis(
 
 -   **`image_analyzer.py`**: Core script for metadata generation and processing.
 -   **`shutterstock.csv`**: Output file containing structured metadata.
+
+### **Alternative Models**
+
+While the tool is optimized for **`llama3.2-vision`**, it also supports other vision models, such as **`llava-7b`** and **`llava-llama3-8b`**, which come with their own advantages and limitations:
+
+#### **Model Options**
+
+1.  **Llama3.2-vision**:
+   
+    -   **Strengths**: Highly accurate, capable of recognizing well-known objects (e.g., "Eiffel Tower" instead of "tower" or "landmark").
+    -   **Weaknesses**: Slightly slower compared to other models.
+2.  **Llava**:
+   
+    -   **Strengths**: Faster than `llama3.2-vision`, suitable for larger datasets.
+    -   **Weaknesses**: Limited to general concepts like "bird" or "monkey" without specifying exact species or object types.
+3.  **Llava-llama3**:
+    
+    -   **Strengths**: Extremely fast, capable of creating more emotional and engaging descriptions.
+    -   **Weaknesses**: May not follow specific instructions (e.g., generating at least 7 keywords) and struggles with detailed object recognition.
+
+----------
+
+### **Customizing for Other Models**
+
+When using alternative models, some parameters or parts of the prompt may need to be adapted. For example:
+
+-   **Keywords**: Models like `llava` may not generate a specific number of keywords as instructed. You might need to post-process or fine-tune prompts to address this.
+-   **Descriptions**: While less precise in identifying objects, `llava` models excel at creating emotional and atmospheric descriptions.
+-   **Categories**: Consider simplifying the list of categories, as some models may perform better with fewer options.
+
+To switch models, update the `model` parameter in the script:
+
+python
+
+Copy code
+
+`analyzer = ImageAnalyzer(model="llava", base_url="http://localhost:11434/")` 
+
+----------
+
+### **Choosing the Right Model**
+
+If speed is a priority (e.g., for processing thousands of images), models like `llava` or `llava-llama3` might be more suitable. However, if accuracy in recognizing real-world objects and providing detailed classifications (e.g., identifying specific landmarks, species, or distinct features) is essential, `llama3.2-vision` remains the best choice.
