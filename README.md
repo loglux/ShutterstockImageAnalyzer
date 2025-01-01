@@ -151,8 +151,8 @@ The evaluation method provides a summary of how well the generated results adher
 
 ### Example Usage
 ```python
-compliance_stats = analyzer.evaluate_prompt_compliance("results.csv")
-print(compliance_stats)
+    compliance_stats = analyzer.evaluate_prompt_compliance(csv_file_path)
+    print("Compliance with prompt requirements:", compliance_stats)
 ```
 ### What the Metrics Represent:
 The evaluation method provides detailed metrics to assess how well the generated results adhere to the prompt's requirements. Below is a breakdown of each metric:
