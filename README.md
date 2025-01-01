@@ -144,6 +144,56 @@ analyzer.start_analysis(
 -   **`image_analyzer.py`**: Core script for metadata generation and processing.
 -   **`shutterstock.csv`**: Output file containing structured metadata.
 ----------
+## Prompt Compliance Evaluation
+The evaluation method provides a summary of how well the generated results adhere to the prompt's requirements. Please note:
+- **Compliance may not always be 100%** due to factors like repetitive starting phrases, insufficient keyword counts, or model-specific constraints.
+- The provided statistics are intended to guide improvements in model settings or prompt design.
+
+### Example Usage
+```python
+compliance_stats = analyzer.evaluate_prompt_compliance("results.csv")
+print(compliance_stats)
+```
+### What the Metrics Represent:
+The evaluation method provides detailed metrics to assess how well the generated results adhere to the prompt's requirements. Below is a breakdown of each metric:
+
+- **`description_compliance`**:
+  - Percentage of descriptions with a length not exceeding 200 characters.
+  - **Why it matters**: Ensures descriptions are concise and meet platform constraints.
+
+- **`keyword_min_compliance`**:
+  - Percentage of cases where at least 7 keywords are generated.
+  - **Why it matters**: Guarantees a minimum level of diversity and relevance in keywords.
+
+- **`keyword_max_compliance`**:
+  - Percentage of cases where the number of keywords does not exceed 50.
+  - **Why it matters**: Prevents overly verbose outputs while keeping the keywords manageable.
+
+- **`category_compliance`**:
+  - Percentage of cases where exactly 1 or 2 categories are returned.
+  - **Why it matters**: Ensures strict adherence to the requirement of selecting categories from a predefined list without exceeding the allowed number.
+
+- **`description_uniqueness`**:
+  - Percentage of unique descriptions. The higher, the better.
+  - **Why it matters**: Encourages variety and creativity in generated outputs, avoiding repetition across multiple results.
+
+- **`duplicate_start_phrases`**:
+  - Percentage of descriptions starting with the same first 5 words.
+  - **Why it matters**: A high percentage might indicate formulaic or repetitive outputs, but this metric is less critical for some use cases. Depending on the application, repetitive starting phrases may or may not impact the overall quality of the results.
+
+### Key Notes:
+1. **Focus on the critical metrics**:
+   - Metrics like `description_compliance`, `keyword_min_compliance`, `keyword_max_compliance`, and `category_compliance` are generally more important for ensuring adherence to platform and prompt requirements.
+   
+2. **Secondary metrics (`description_uniqueness`, `duplicate_start_phrases`)**:
+   - While these provide insights into the variety and diversity of outputs, they may not be crucial for all applications.
+   - For instance, repetitive starting phrases (`duplicate_start_phrases`) might not matter as long as the descriptions are otherwise unique and meet length requirements.
+
+3. **Using the metrics effectively**:
+   - Use the compliance metrics as a diagnostic tool to identify areas for improvement in the prompt or model settings.
+   - Treat lower scores on `description_uniqueness` or `duplicate_start_phrases` as a potential improvement area, rather than a strict requirement.
+
+----------
 ### **Alternative Models**
 
 While the tool is optimized for **`llama3.2-vision`**, it also supports other vision models, such as **`llava-7b`** and **`llava-llama3-8b`**, which come with their own advantages and limitations:

@@ -36,15 +36,43 @@ class ImageAnalyzer:
                 prompt = (
                     """
                     Analyze this image and provide the following details:
-                    1. Provide a concise image caption under 200 characters for Shutterstock. Avoid introductory phrases such as 'The image features', 'This serene scene depicts', 'The image depicts' or 'The image captures'. Avoid assumptions or guesses. If possible, specify the exact name of the object, landmark, or location (e.g., "Eiffel Tower" instead of "tower" or "landmark"; "Bald Eagle" instead of "bird"). Use specific terms for identifiable entities or features visible in the image, avoiding overly generic descriptions. Add emotional, engaging language to highlight the beauty, atmosphere, or unique character of the scene.
-                    2. Include **at least 7** and up to 50 unique and diverse keywords that are highly relevant to the image content, even if they are not directly mentioned in the description. Ensure to include synonyms (e.g., "gull", "seagull", "waterbird"), while avoiding contradictory or conflicting terms.
-                    3. Select up to two categories that best describe the image, choosing from the list below. ***Only two categories are allowed**. Categories must be **strictly chosen** from the following list:
-
-                    Abstract, Animals/Wildlife, Arts, Backgrounds/Textures, Beauty/Fashion, Buildings/Landmarks, 
-                    Business/Finance, Celebrities, Education, Food and drink, Healthcare/Medical, Holidays, 
-                    Industrial, Interiors, Miscellaneous, Nature, Objects, Parks/Outdoor, People, Religion, 
-                    Science, Signs/Symbols, Sports/Recreation, Technology, Transportation, Vintage.
-
+                    1. Provide a concise image caption under 200 characters for Shutterstock. Avoid introductory phrase, be direct and descriptive. Avoid assumptions or guesses. If possible, specify the exact name of the object, landmark, or location (e.g., "Eiffel Tower" instead of "tower" or "landmark"; "Bald Eagle" instead of "bird"). Use specific terms for identifiable entities or features visible in the image, avoiding overly generic descriptions. Add emotional, engaging language to highlight the beauty, atmosphere, or unique character of the scene.
+                    2. Generate no fewer than 7 and up to 50 unique and relevant keywords describing the image.  
+                        - Focus on terms that are highly relevant to the image content and avoid overly generic words.  
+                        - Use synonyms and related terms (e.g., "gull", "seagull", "waterbird") to diversify the keywords.  
+                        - Avoid repeating the same concept unnecessarily unless it adds value.
+                    3. Choose one or two categories that best match the image. 
+                    - Do not generate more than two categories.  
+                    - Strictly choose one or two categories from the provided list. Do not modify, combine, or create additional categories.
+                    - If only one category applies, leave the second blank.  
+                    - Example: "Nature" or "Buildings/Landmarks, Nature".
+                    Available categories:
+                    - Abstract
+                    - Animals/Wildlife
+                    - Arts
+                    - Backgrounds/Textures
+                    - Beauty/Fashion
+                    - Buildings/Landmarks
+                    - Business/Finance
+                    - Celebrities
+                    - Education
+                    - Food and drink
+                    - Healthcare/Medical
+                    - Holidays
+                    - Industrial
+                    - Interiors
+                    - Miscellaneous
+                    - Nature
+                    - Objects
+                    - Parks/Outdoor
+                    - People
+                    - Religion
+                    - Science
+                    - Signs/Symbols
+                    - Sports/Recreation
+                    - Technology
+                    - Transportation
+                    - Vintage
                     4. Based on the visual content of the image, classify it as **commercial** or **editorial** based on the following criteria:
                     - **Commercial**:
                       - The image looks generic and polished, making it suitable for advertising or promotional use.
@@ -56,11 +84,9 @@ class ImageAnalyzer:
                       - It may show visible logos, brand names, trademarks, recognizable individuals, or properties.
                       - The image feels spontaneous or candid, representing authentic, unscripted moments.
                       - It may illustrate cultural, social, or historical significance, or document a notable event or place.
-
                     5. Indicate if the image contains **Mature Content**:
                         - **Yes**: The image contains nudity, sexual themes, violence, or any content that could be considered inappropriate for a general audience.
                         - **No**: The image does not contain any of the above elements and is suitable for all audiences.
-
                     6. Indicate if the image qualifies as an **Illustration**:
                         - **Yes**: The image is created digitally, manually drawn, or heavily edited to include artistic or conceptual elements that are not photographic.
                         - **No**: The image is a straightforward photograph with no significant artistic manipulation.
@@ -89,11 +115,12 @@ class ImageAnalyzer:
                 ],
                 "format": ImageAnalysisResult.model_json_schema(),  # Pass the schema
                 "options": {
-                    "num_ctx": 8192,
-                    "num_predict": 500,  # low value causes JSON errors
+                    # "repeat_last_n": 128, # randomly chosen, the default is 64
+                    "num_ctx": 4096,
+                    "num_predict": 600,  # low value causes JSON errors.
                     "top_k": 250,  # should increase the diversity of keywords
-                    "repeat_penalty": 1.1,  # starting with 1.2 and more reduces a number of keywords below 7
-                    "temperature": 0.8,
+                    "repeat_penalty": 1.1,  # Starting with 1.2 and more reduces a number of keywords below 7
+                    "temperature": 0.5,
                     "top_p": 0.9  # 0.9-1.0 should be OK, starting with 0.8 and low produces irrelevant keywords
                 }
             }
@@ -239,8 +266,58 @@ class ImageAnalyzer:
         Returns:
             list: Filtered category list.
         """
-        return [category for category in categories if category in self.ALLOWED_CATEGORIES]
+        # return [category for category in categories if category in self.ALLOWED_CATEGORIES]
+        return [category.strip().title() for category in categories if category.strip().title() in self.ALLOWED_CATEGORIES]
 
+    @staticmethod
+    def evaluate_prompt_compliance(csv_file_path, desc_max=200, key_min=7, key_max=50, category_count=2):
+        if not os.path.exists(csv_file_path):
+            return {"error": f"File not found: {csv_file_path}"}
+
+        # Read the CSV file
+        df = pd.read_csv(csv_file_path)
+
+        if df.empty:
+            return {"error": "CSV file is empty"}
+
+        # Handling empty values in columns
+        df["Categories"] = df["Categories"].fillna("")
+        df["Description"] = df["Description"].fillna("")
+        df["Keywords"] = df["Keywords"].fillna("")
+
+        # Check the length of descriptions
+        desc_lengths = df["Description"].str.strip().str.len()
+        desc_compliance = (desc_lengths <= desc_max).mean() * 100
+
+        # Check the number of keywords
+        key_counts = df["Keywords"].apply(lambda x: len(str(x).split(", ")) if pd.notnull(x) else 0)
+        key_min_compliance = (key_counts >= key_min).mean() * 100
+        key_max_compliance = (key_counts <= key_max).mean() * 100
+
+        # Check the number of categories
+        category_compliance = (
+                df["Categories"]
+                .apply(lambda x: len(str(x).split(", ")) in [1, 2] if pd.notnull(x) else False)
+                .mean() * 100
+        )
+
+        # Check the uniqueness of descriptions
+        unique_descriptions = df["Description"].nunique()
+        description_uniqueness = (unique_descriptions / len(df)) * 100
+
+        # Check the repetition of opening phrases
+        start_phrases = df["Description"].str.split().str[:5].str.join(" ")
+        duplicate_starts = start_phrases.duplicated(keep=False).mean() * 100
+
+        # Return the summary
+        return {
+            "description_compliance": desc_compliance,
+            "keyword_min_compliance": key_min_compliance,
+            "keyword_max_compliance": key_max_compliance,
+            "category_compliance": category_compliance,
+            "description_uniqueness": description_uniqueness,
+            "duplicate_start_phrases": duplicate_starts,
+        }
 
 # Example usage
 if __name__ == "__main__":
@@ -253,3 +330,9 @@ if __name__ == "__main__":
 
     #analyzer.start_analysis(image_path, prompt=None, advanced_options=None)
     analyzer.process_images_in_directory(image_directory_path, csv_file_path, prompt=None, advanced_options=None, recursive=False)
+
+    # Evaluating prompt complaince.
+    compliance_stats = analyzer.evaluate_prompt_compliance(csv_file_path)
+    print("Compliance with prompt requirements:", compliance_stats)
+
+
