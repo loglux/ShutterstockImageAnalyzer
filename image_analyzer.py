@@ -29,7 +29,7 @@ class ImageAnalyzer:
         self.base_url = base_url
         self.client = Client(host=base_url)
 
-    def analyze_image(self, image_path, prompt=None, advanced_options=None):
+    def analyze_image(self, image_path, prompt=None, advanced_options=None, hint=None):
         try:
             # Define default prompt if none is provided
             if not prompt:
@@ -103,6 +103,11 @@ class ImageAnalyzer:
                     """
                 )
 
+            # if a hint is provided:
+            if hint:
+                prompt = f"{hint}\n\n{prompt}"
+                print(f"Added hint to the prompt: {hint}")
+
             # Prepare the request payload
             data = {
                 "model": self.model,
@@ -120,7 +125,7 @@ class ImageAnalyzer:
                     "num_predict": 600,  # low value causes JSON errors.
                     "top_k": 250,  # should increase the diversity of keywords
                     "repeat_penalty": 1.1,  # Starting with 1.2 and more reduces a number of keywords below 7
-                    "temperature": 0.5,
+                    "temperature": 0.7,
                     "top_p": 0.9  # 0.9-1.0 should be OK, starting with 0.8 and low produces irrelevant keywords
                 }
             }
@@ -202,7 +207,7 @@ class ImageAnalyzer:
 
         print(f"Data saved to {file_path}")
 
-    def start_analysis(self, image_path, file_path, prompt=None, advanced_options=None):
+    def start_analysis(self, image_path, file_path, prompt=None, advanced_options=None, hint=None):
         """
         Analyze an image and save the results to a CSV file.
         Args:
@@ -212,7 +217,7 @@ class ImageAnalyzer:
         :param advanced_options (dict, optional): Advanced options for the analysis. Defaults to None.
         """
         # Analyze the image
-        result = self.analyze_image(image_path, prompt, advanced_options)
+        result = self.analyze_image(image_path, prompt, advanced_options, hint=hint)
 
         # Ensure result is structured before proceeding
         if isinstance(result, ImageAnalysisResult):
@@ -221,7 +226,7 @@ class ImageAnalyzer:
         else:
             print("Failed to analyze image:", result)
 
-    def process_images_in_directory(self, directory_path, file_path, prompt=None, advanced_options=None, recursive=True):
+    def process_images_in_directory(self, directory_path, file_path, prompt=None, advanced_options=None, recursive=True, hint=None):
         """
         Search and process all images in a directory and subdirectories.
         Args:
@@ -254,7 +259,7 @@ class ImageAnalyzer:
         # Processing images one by one
         for image_path in image_files:
             print(f"Processing: {image_path}")
-            self.start_analysis(str(image_path), file_path, prompt, advanced_options)
+            self.start_analysis(str(image_path), file_path, prompt, advanced_options, hint=hint)
             time.sleep(0.5)
 
     #@staticmethod
@@ -328,11 +333,11 @@ if __name__ == "__main__":
     image_directory_path = r"path/to/images/directory"
     csv_file_path = "shutterstock.csv"
 
-    #analyzer.start_analysis(image_path, prompt=None, advanced_options=None)
-    analyzer.process_images_in_directory(image_directory_path, csv_file_path, prompt=None, advanced_options=None, recursive=False)
+    # Add an optional hint before the prompt, to give a clue to the model
+    hint = None
+    # hint = "White Park Bay, Atlantic Ocean"
 
-    # Evaluating prompt complaince.
-    compliance_stats = analyzer.evaluate_prompt_compliance(csv_file_path)
-    print("Compliance with prompt requirements:", compliance_stats)
+    #analyzer.start_analysis(image_path, prompt=None, advanced_options=None)
+    analyzer.process_images_in_directory(image_directory_path, csv_file_path, prompt=None, advanced_options=None, recursive=False, hint=None)
 
 

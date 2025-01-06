@@ -144,6 +144,29 @@ analyzer.start_analysis(
 -   **`image_analyzer.py`**: Core script for metadata generation and processing.
 -   **`shutterstock.csv`**: Output file containing structured metadata.
 ----------
+## Optional Hint Feature for Image Analysis
+
+### Overview:
+This tool now supports an optional `hint` parameter when processing multiple images in a directory. The `hint` provides additional context (such as location or event) that helps guide the model during the analysis, ensuring that the generated metadata is more relevant and accurate.
+
+### How to use the hint:
+To use the `hint` feature, simply pass a string that describes the context or location when calling the `process_images_in_directory` method. For example:
+
+```python
+hint = "White Park Bay, Atlantic Ocean"
+analyzer.process_images_in_directory(
+    image_directory_path,
+    csv_file_path,
+    prompt=None,
+    advanced_options=None,
+    recursive=False,
+    hint=hint  # Provide the location-based hint for all images in the directory
+)
+```
+If the hint is not provided (Default: `hint=None`), the analysis will proceed without the context, and the model will generate metadata based only on the images themselves.
+
+----------
+
 ## Prompt Compliance Evaluation
 The evaluation method provides a summary of how well the generated results adhere to the prompt's requirements. Please note:
 - **Compliance may not always be 100%** due to factors like repetitive starting phrases, insufficient keyword counts, or model-specific constraints.
