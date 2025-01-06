@@ -144,7 +144,7 @@ analyzer.start_analysis(
 -   **`image_analyzer.py`**: Core script for metadata generation and processing.
 -   **`shutterstock.csv`**: Output file containing structured metadata.
 ----------
-## Optional Hint Feature for Image Analysis
+## Optional `Hint` Feature for Image Analysis
 
 ### Overview:
 This tool now supports an optional `hint` parameter when processing multiple images in a directory. The `hint` provides additional context (such as location or event) that helps guide the model during the analysis, ensuring that the generated metadata is more relevant and accurate.
