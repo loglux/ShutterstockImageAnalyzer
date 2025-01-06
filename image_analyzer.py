@@ -146,7 +146,20 @@ class ImageAnalyzer:
                 )
 
                 # Parse the JSON response
-                return ImageAnalysisResult.model_validate_json(response.message.content)
+                result = ImageAnalysisResult.model_validate_json(response.message.content)
+
+                # Validating the length of the description:
+                if len(result.description) > 200:
+                    print("Warning: Generated caption exceeds 200 characters. Attempting to rewrite.")
+                    # prompt = f"Please shorten the following image caption to fit within 200 characters while retaining its meaning and key details:\n\n{result.description}"
+                    prompt = f"Rewrite the following image caption to be concise and fit within 200 characters. Provide only the revised caption without any explanations:\n\n{result.description}"
+                    rewrite_response = self.client.chat(
+                        model=self.model,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    result.description = rewrite_response.message.content.strip()
+
+                return result
 
 
             except ValidationError as e:
@@ -355,3 +368,4 @@ if __name__ == "__main__":
 
     #analyzer.start_analysis(image_path, prompt=None, advanced_options=None)
     analyzer.process_images_in_directory(image_directory_path, csv_file_path, prompt=None, advanced_options=None, recursive=False, hint=None)
+
