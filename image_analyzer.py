@@ -1,6 +1,6 @@
 import time
 from ollama import Client
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 import pandas as pd
 import os
 from pathlib import Path
@@ -29,124 +29,140 @@ class ImageAnalyzer:
         self.base_url = base_url
         self.client = Client(host=base_url)
 
-    def analyze_image(self, image_path, prompt=None, advanced_options=None, hint=None):
-        try:
-            # Define default prompt if none is provided
-            if not prompt:
-                prompt = (
-                    """
-                    Analyze this image and provide the following details:
-                    1. Provide a concise image caption under 200 characters for Shutterstock. Avoid introductory phrase, be direct and descriptive. Avoid assumptions or guesses. If possible, specify the exact name of the object, landmark, or location (e.g., "Eiffel Tower" instead of "tower" or "landmark"; "Bald Eagle" instead of "bird"). Use specific terms for identifiable entities or features visible in the image, avoiding overly generic descriptions. Add emotional, engaging language to highlight the beauty, atmosphere, or unique character of the scene.
-                    2. Generate no fewer than 7 and up to 50 unique and relevant keywords describing the image.  
-                        - Focus on terms that are highly relevant to the image content and avoid overly generic words.  
-                        - Use synonyms and related terms (e.g., "gull", "seagull", "waterbird") to diversify the keywords.  
-                        - Avoid repeating the same concept unnecessarily unless it adds value.
-                    3. Choose one or two categories that best match the image. 
-                    - Do not generate more than two categories.  
-                    - Strictly choose one or two categories from the provided list. Do not modify, combine, or create additional categories.
-                    - If only one category applies, leave the second blank.  
-                    - Example: "Nature" or "Buildings/Landmarks, Nature".
-                    Available categories:
-                    - Abstract
-                    - Animals/Wildlife
-                    - Arts
-                    - Backgrounds/Textures
-                    - Beauty/Fashion
-                    - Buildings/Landmarks
-                    - Business/Finance
-                    - Celebrities
-                    - Education
-                    - Food and drink
-                    - Healthcare/Medical
-                    - Holidays
-                    - Industrial
-                    - Interiors
-                    - Miscellaneous
-                    - Nature
-                    - Objects
-                    - Parks/Outdoor
-                    - People
-                    - Religion
-                    - Science
-                    - Signs/Symbols
-                    - Sports/Recreation
-                    - Technology
-                    - Transportation
-                    - Vintage
-                    4. Based on the visual content of the image, classify it as **commercial** or **editorial** based on the following criteria:
-                    - **Commercial**:
-                      - The image looks generic and polished, making it suitable for advertising or promotional use.
-                      - It does NOT show visible logos, brand names, or trademarks.
-                      - It does NOT feature clearly recognizable individuals, private properties, or artworks unless they are generic or unidentifiable.
-                      - The scene appears intentionally staged or directed for professional purposes.
-                    - **Editorial**:
-                      - The image captures a real-life moment, event, or public place without significant staging.
-                      - It may show visible logos, brand names, trademarks, recognizable individuals, or properties.
-                      - The image feels spontaneous or candid, representing authentic, unscripted moments.
-                      - It may illustrate cultural, social, or historical significance, or document a notable event or place.
-                    5. Indicate if the image contains **Mature Content**:
-                        - **Yes**: The image contains nudity, sexual themes, violence, or any content that could be considered inappropriate for a general audience.
-                        - **No**: The image does not contain any of the above elements and is suitable for all audiences.
-                    6. Indicate if the image qualifies as an **Illustration**:
-                        - **Yes**: The image is created digitally, manually drawn, or heavily edited to include artistic or conceptual elements that are not photographic.
-                        - **No**: The image is a straightforward photograph with no significant artistic manipulation.
+    def analyze_image(self, image_path, prompt=None, advanced_options=None, hint=None, max_retries=4):
+        attempt = 0
+        while attempt < max_retries:
+            attempt += 1
+            try:
+                # Define default prompt if none is provided
+                if not prompt:
+                    prompt = (
+                        """
+                        Analyze this image and provide the following details:
+                        1. Provide a concise image caption under 200 characters for Shutterstock. Avoid introductory phrase, be direct and descriptive. Avoid assumptions or guesses. If possible, specify the exact name of the object, landmark, or location (e.g., "Eiffel Tower" instead of "tower" or "landmark"; "Bald Eagle" instead of "bird"). Use specific terms for identifiable entities or features visible in the image, avoiding overly generic descriptions. Add emotional, engaging language to highlight the beauty, atmosphere, or unique character of the scene.
+                        2. Generate no fewer than 7 and up to 50 unique and relevant keywords describing the image.  
+                            - Focus on terms that are highly relevant to the image content and avoid overly generic words.  
+                            - Use synonyms and related terms (e.g., "gull", "seagull", "waterbird") to diversify the keywords.  
+                            - Avoid repeating the same concept unnecessarily unless it adds value.
+                        3. Choose one or two categories that best match the image. 
+                        - Do not generate more than two categories.  
+                        - Strictly choose one or two categories from the provided list. Do not modify, combine, or create additional categories.
+                        - If only one category applies, leave the second blank.  
+                        - Example: "Nature" or "Buildings/Landmarks, Nature".
+                        Available categories:
+                        - Abstract
+                        - Animals/Wildlife
+                        - Arts
+                        - Backgrounds/Textures
+                        - Beauty/Fashion
+                        - Buildings/Landmarks
+                        - Business/Finance
+                        - Celebrities
+                        - Education
+                        - Food and drink
+                        - Healthcare/Medical
+                        - Holidays
+                        - Industrial
+                        - Interiors
+                        - Miscellaneous
+                        - Nature
+                        - Objects
+                        - Parks/Outdoor
+                        - People
+                        - Religion
+                        - Science
+                        - Signs/Symbols
+                        - Sports/Recreation
+                        - Technology
+                        - Transportation
+                        - Vintage
+                        4. Based on the visual content of the image, classify it as **commercial** or **editorial** based on the following criteria:
+                        - **Commercial**:
+                          - The image looks generic and polished, making it suitable for advertising or promotional use.
+                          - It does NOT show visible logos, brand names, or trademarks.
+                          - It does NOT feature clearly recognizable individuals, private properties, or artworks unless they are generic or unidentifiable.
+                          - The scene appears intentionally staged or directed for professional purposes.
+                        - **Editorial**:
+                          - The image captures a real-life moment, event, or public place without significant staging.
+                          - It may show visible logos, brand names, trademarks, recognizable individuals, or properties.
+                          - The image feels spontaneous or candid, representing authentic, unscripted moments.
+                          - It may illustrate cultural, social, or historical significance, or document a notable event or place.
+                        5. Indicate if the image contains **Mature Content**:
+                            - **Yes**: The image contains nudity, sexual themes, violence, or any content that could be considered inappropriate for a general audience.
+                            - **No**: The image does not contain any of the above elements and is suitable for all audiences.
+                        6. Indicate if the image qualifies as an **Illustration**:
+                            - **Yes**: The image is created digitally, manually drawn, or heavily edited to include artistic or conceptual elements that are not photographic.
+                            - **No**: The image is a straightforward photograph with no significant artistic manipulation.
+    
+                        Return the result in the following JSON format:
+                        {
+                            "description": "A brief descriptive text for the image.",
+                            "keywords": ["keyword1", "keyword2", "..."],
+                            "categories": ["category1", "category2"],
+                            "editorial": true/false,
+                            "mature_content": true/false,
+                            "illustration": true/false
+                        }
+                        """
+                    )
 
-                    Return the result in the following JSON format:
-                    {
-                        "description": "A brief descriptive text for the image.",
-                        "keywords": ["keyword1", "keyword2", "..."],
-                        "categories": ["category1", "category2"],
-                        "editorial": true/false,
-                        "mature_content": true/false,
-                        "illustration": true/false
+                # if a hint is provided:
+                if hint:
+                    prompt = f"{hint}\n\n{prompt}"
+                    print(f"Added hint to the prompt: {hint}")
+
+                # Prepare the request payload
+                data = {
+                    "model": self.model,
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": prompt,
+                            "images": [image_path]
+                        }
+                    ],
+                    "format": ImageAnalysisResult.model_json_schema(),  # Pass the schema
+                    "options": {
+                        # "repeat_last_n": 128, # randomly chosen, the default is 64
+                        "num_ctx": 4096,
+                        "num_predict": 800,  # low value causes JSON errors.
+                        "top_k": 250,  # should increase the diversity of keywords
+                        "repeat_penalty": 1.1,  # Starting with 1.2 and more reduces a number of keywords below 7
+                        "temperature": 0.7,
+                        "top_p": 0.9  # 0.9-1.0 should be OK, starting with 0.8 and low produces irrelevant keywords
                     }
-                    """
+                }
+
+                if advanced_options:
+                    data["options"].update(advanced_options.get("options", {}))
+
+                print("Sending request to the model...")
+                # print("Data sent:", json.dumps(data, indent=4))  # Debug: Show request payload
+                response = self.client.chat(
+                    model=self.model,
+                    messages=data["messages"],
+                    format=data["format"],
+                    options=data["options"]
                 )
 
-            # if a hint is provided:
-            if hint:
-                prompt = f"{hint}\n\n{prompt}"
-                print(f"Added hint to the prompt: {hint}")
+                # Parse the JSON response
+                return ImageAnalysisResult.model_validate_json(response.message.content)
 
-            # Prepare the request payload
-            data = {
-                "model": self.model,
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": prompt,
-                        "images": [image_path]
-                    }
-                ],
-                "format": ImageAnalysisResult.model_json_schema(),  # Pass the schema
-                "options": {
-                    # "repeat_last_n": 128, # randomly chosen, the default is 64
-                    "num_ctx": 4096,
-                    "num_predict": 600,  # low value causes JSON errors.
-                    "top_k": 250,  # should increase the diversity of keywords
-                    "repeat_penalty": 1.1,  # Starting with 1.2 and more reduces a number of keywords below 7
-                    "temperature": 0.7,
-                    "top_p": 0.9  # 0.9-1.0 should be OK, starting with 0.8 and low produces irrelevant keywords
-                }
-            }
 
-            if advanced_options:
-                data["options"].update(advanced_options.get("options", {}))
+            except ValidationError as e:
+                print(f"Validation error occurred on attempt {attempt}: {e}")
+                if "json_invalid" in str(e):
+                    print("JSON error, retrying...")
+                    time.sleep(1) # a little pause before new attempt
+                    continue
+                else:
+                    # if the error is not 'json_invalid'
+                    print(f"Error: {e}. Skipping this image.")
+                    return f"Error: {e}. Skipping this image."
 
-            print("Sending request to the model...")
-            # print("Data sent:", json.dumps(data, indent=4))  # Debug: Show request payload
-            response = self.client.chat(
-                model=self.model,
-                messages=data["messages"],
-                format=data["format"],
-                options=data["options"]
-            )
+        print(f"Failed to analyze image after {max_retries} attempts: {image_path}")
+        return f"Failed to analyze image after {max_retries} attempts: {image_path}"
 
-            # Parse the JSON response
-            return ImageAnalysisResult.model_validate_json(response.message.content)
-
-        except Exception as e:
-            return f"An error occurred: {e}"
 
     # @staticmethod
     def save_to_csv(self, results, image_path, file_path):
@@ -339,5 +355,3 @@ if __name__ == "__main__":
 
     #analyzer.start_analysis(image_path, prompt=None, advanced_options=None)
     analyzer.process_images_in_directory(image_directory_path, csv_file_path, prompt=None, advanced_options=None, recursive=False, hint=None)
-
-
