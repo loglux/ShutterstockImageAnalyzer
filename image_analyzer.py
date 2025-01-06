@@ -39,7 +39,7 @@ class ImageAnalyzer:
                     prompt = (
                         """
                         Analyze this image and provide the following details:
-                        1. Provide a concise image caption under 200 characters for Shutterstock. Avoid introductory phrase, be direct and descriptive. Avoid assumptions or guesses. If possible, specify the exact name of the object, landmark, or location (e.g., "Eiffel Tower" instead of "tower" or "landmark"; "Bald Eagle" instead of "bird"). Use specific terms for identifiable entities or features visible in the image, avoiding overly generic descriptions. Add emotional, engaging language to highlight the beauty, atmosphere, or unique character of the scene.
+                        1. Provide an engaging image caption. The caption must be under 200 characters. Do not exceed this limit under any circumstances. Avoid introductory phrase, be direct and descriptive. Avoid assumptions or guesses. If possible, specify the exact name of the object, landmark, or location (e.g., "Eiffel Tower" instead of "tower" or "landmark"; "Bald Eagle" instead of "bird"). Use specific terms for identifiable entities or features visible in the image, avoiding overly generic descriptions. Add emotional, engaging language to highlight the beauty, atmosphere, or unique character of the scene.
                         2. Generate no fewer than 7 and up to 50 unique and relevant keywords describing the image.  
                             - Focus on terms that are highly relevant to the image content and avoid overly generic words.  
                             - Use synonyms and related terms (e.g., "gull", "seagull", "waterbird") to diversify the keywords.  
@@ -125,8 +125,8 @@ class ImageAnalyzer:
                     "options": {
                         # "repeat_last_n": 128, # randomly chosen, the default is 64
                         "num_ctx": 4096,
-                        "num_predict": 800,  # low value causes JSON errors.
-                        "top_k": 250,  # should increase the diversity of keywords
+                        "num_predict": 600,  # low value causes JSON errors
+                        "top_k": 260,  # should increase the diversity of keywords.
                         "repeat_penalty": 1.1,  # Starting with 1.2 and more reduces a number of keywords below 7
                         "temperature": 0.7,
                         "top_p": 0.9  # 0.9-1.0 should be OK, starting with 0.8 and low produces irrelevant keywords
