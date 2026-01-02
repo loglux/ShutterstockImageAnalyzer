@@ -1,3 +1,5 @@
 ollama
 pandas
 pydantic
+tqdm
+pillow

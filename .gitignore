@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.cache/
+venv/
+shutterstock.csv
+groomsport_harbour/
+groomsport_sample*/
+DSC_*.JPG
+AGENTS.md
